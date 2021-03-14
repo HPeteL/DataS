@@ -1,0 +1,58 @@
+# An Analysis of FAANG Stocks during Corona Virus Pandemic ie 2020
+
+### Importing the required libraries for the project
+
+from pandas_datareader import data, wb
+import pandas as pd
+import numpy as np
+import datetime
+%matplotlib inline
+
+The stocks that are considered for this study are:
+FANG - Facebook
+AMZN - Amazon
+AAPL - Apple
+NFLX - Netflix
+GOOG - Google
+
+### Importing the required data from Yahoo data
+
+# from on the companies will be refered by their tickers
+AAPL = data.DataReader("AAPL", 'yahoo', '1/1/2020', '31/12/2020')
+FANG = data.DataReader("FANG", 'yahoo', '1/1/2020', '31/12/2020')
+NFLX = data.DataReader("NFLX", 'yahoo', '1/1/2020', '31/12/2020')
+GOOG = data.DataReader("GOOG", 'yahoo', '1/1/2020', '31/12/2020')
+AMZN = data.DataReader("AMZN",'yahoo', '1/1/2020', '31/12/2020')
+
+tickers = ['AAPL','FANG','NFLX','GOOG','AMZN']
+
+# Combining the above data into a single dataset
+stock = pd.concat([AAPL,FANG,NFLX,GOOG,AMZN],axis = 1,keys = tickers)
+
+stock.columns.names = ['Tickers','Stock_Info']
+
+# checking the data 
+stock.head()
+
+# Checking the characteristics of the dataset
+
+#finding the max values of all the stocks
+stock.xs(key= 'Close',axis=1,level='Stock_Info').max()
+
+#Creating data set made up of returns of the above stocks
+returns = pd.DataFrame()
+
+for t in tickers:
+    returns[t+'return'] = stock[t]['Close'].pct_change()
+print(returns)
+
+#creating visuals to find the nature of the data relations 
+import seaborn as sns
+
+sns.pairplot(data = returns)
+
+# Checking the min returns of stock and date
+returns.idxmin()
+
+# Finding the dates of max values
+returns.idxmax()
